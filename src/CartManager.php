@@ -19,43 +19,36 @@ class CartManager
 
     public function items()
     {
-        return $this->items->reject(fn ($item) => $item->removed || $item->quantity < 1);
-    }
-
-    public function empty()
-    {
-        return $this->items()->isEmpty();
+        return $this->items;
     }
 
     public function total()
     {
-        return $this->items()->sum(fn ($item) =>
-            $item->unit_price * $item->quantity
+        return $this->items->sum(
+            fn ($item) =>
+            $item->model->price * $item->quantity
         );
     }
     
     public function add(Model $model, int $quantity = 1)
     {
-        if ($existingItem = $this->find($model)) {
+        if ($existingItem = $this->items->first(fn ($item) => $item->model->is($model))) {
             $existingItem->quantity += $quantity;
         } else {
-            $this->items->add(
-                tap(new CartItem($model))->quantity($quantity)
-            );
+            $this->items->add(tap(
+                new CartItem($model),
+                fn ($item) =>
+                $item->quantity = $quantity
+            ));
         }
 
-        $this->save();
+        $this->update();
     }
 
-    public function find(Model $model): ?CartItem
-    {
-        return $this->items()->first(fn ($item) => $item->model->is($model));
-    }
-
-    public function save()
+    public function update()
     {
         session()->put('cart', [
-            'items' => $this->items(),
+            'items' => $this->items,
         ]);
     }
 
@@ -63,14 +56,12 @@ class CartManager
     {
         $freshModels = EloquentCollection::make($this->items->pluck('model'))->fresh();
 
-        $freshItems = $this->items
-            ->filter(fn ($item) => 
-                $freshModels->contains($item->model)
-            )
-            ->each(fn ($item) => 
-                $item->model = $freshModels->find($item->model)
-            );
-
-        $this->items = $freshItems;
+        $this->items = $this->items
+            ->filter(function ($item) use ($freshModels) {
+                return $freshModels->contains($item->model);
+            })
+            ->each(function ($item) use ($freshModels) {
+                $item->model = $freshModels->find($item->model);
+            });
     }
 }

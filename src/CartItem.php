@@ -7,13 +7,10 @@ use Illuminate\Support\Str;
 
 class CartItem
 {
-    public string $id;
     public int $quantity = 1;
-    public bool $removed = false;
 
-    public function __construct(public Model $model) 
+    public function __construct(public Model $model)
     {
-        $this->id = Str::uuid();
     }
 
     public function total()
@@ -26,37 +23,14 @@ class CartItem
         return $this->model->price;
     }
 
-    public function quantity($value = null)
-    {
-        if (is_null($value)) {
-            return $this->quantity;
-        }
-        
-        $this->quantity = $value;
-
-        $this->save();
-    }
-
-    public function remove()
-    {
-        $this->removed = true;
-
-        $this->save();
-    }
-
-    public function save()
-    {
-        Cart::save();
-    }
-
     private function hasAccessor($attribute)
     {
-        return in_array(Str::camel($attribute), ['total', 'unitPrice']);
+        return method_exists($this, Str::studly($attribute));
     }
 
     private function callAccessor($attribute)
     {
-        $accessor = Str::camel($attribute);
+        $accessor = Str::studly($attribute);
         
         return $this->$accessor();
     }

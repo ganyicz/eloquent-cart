@@ -133,7 +133,7 @@ class ExampleTest extends TestCase
     }
 }
 
-class Product extends Model 
+class Product extends Model
 {
     protected $guarded = [];
     protected $casts = [
