@@ -9,6 +9,8 @@ class CartItem
 {
     public int $quantity = 1;
 
+    private bool $removed = false;
+
     public function __construct(public Model $model) {}
 
     public function total()
@@ -19,6 +21,11 @@ class CartItem
     public function unitPrice()
     {
         return $this->model->price;
+    }
+
+    public function remove()
+    {
+        $this->removed = true;
     }
 
     private function hasAccessor($attribute)

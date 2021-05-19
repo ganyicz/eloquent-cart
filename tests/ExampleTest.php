@@ -100,6 +100,22 @@ class ExampleTest extends TestCase
 
         $this->assertEquals(200_00, Cart::items()->first()->total);
     }
+
+    /** @test */
+    public function cart_item_can_be_removed()
+    {
+        $product = Product::create(['price' => 100_00]);
+
+        Cart::add($product);
+
+        Cart::items()->first()->remove();
+
+        Cart::save();
+
+        $this->assertEquals(0, Cart::total());
+        $this->assertEmpty(Cart::items());
+        $this->assertEmpty(session('cart.items'));
+    }
 }
 
 class Product extends Model 
