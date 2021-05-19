@@ -19,7 +19,7 @@ class CartManager
 
     public function items()
     {
-        return $this->items->reject(fn ($item) => $item->removed);
+        return $this->items->reject(fn ($item) => $item->removed || $item->quantity < 1);
     }
 
     public function empty()
@@ -47,9 +47,13 @@ class CartManager
         $this->save();
     }
 
-    public function find(Model $model): ?CartItem
+    public function find($model): ?CartItem
     {
-        return $this->items()->first(fn ($item) => $item->model->is($model));
+        return $this->items()->first(fn ($item) => 
+            $model instanceof Model
+                ? $item->model->is($model)
+                : $item->model->getKey() === (int) $model
+        );
     }
 
     public function save()

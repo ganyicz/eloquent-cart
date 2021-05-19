@@ -82,6 +82,23 @@ class ExampleTest extends TestCase
     }
 
     /** @test */
+    public function filters_out_items_with_quantity_lower_than_one()
+    {
+        $product = Product::create(['price' => 100_00]);
+
+        Cart::add($product);
+
+        $item = Cart::find($product);
+
+        $item->quantity--;
+
+        Cart::save();
+
+        $this->assertEmpty(Cart::items());
+        $this->assertEmpty(session('cart.items'));
+    }
+
+    /** @test */
     public function cart_item_calculates_total()
     {
         $product = Product::create(['price' => 100_00]);
