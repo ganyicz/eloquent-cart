@@ -17,6 +17,6 @@ class CartServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('eloquent-cart')
-            ->hasConfigFile('cart')
+            ->hasConfigFile('cart');
     }
 }
