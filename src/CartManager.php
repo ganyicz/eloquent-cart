@@ -2,6 +2,7 @@
 
 namespace Ganyicz\Cart;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -12,6 +13,13 @@ class CartManager
     public function __construct()
     {
         $this->items = collect(session('cart.items'));
+
+        $this->refreshModels();
+    }
+
+    public function items()
+    {
+        return $this->items;
     }
 
     public function total()
@@ -28,7 +36,7 @@ class CartManager
 
         if ($existingItem) {
             $this->items->put($existingItemIndex, [
-                'model' => $existingItem['model'],
+                'model' => $model,
                 'quantity' => $existingItem['quantity'] + $quantity,
             ]);
         } else {
@@ -46,5 +54,21 @@ class CartManager
         session()->put('cart', [
             'items' => $this->items,
         ]);
+    }
+
+    private function refreshModels()
+    {
+        $freshModels = EloquentCollection::make($this->items->pluck('model'))->fresh();
+
+        $this->items = $this->items
+            ->filter(function ($item) use ($freshModels) {
+                return $freshModels->contains($item['model']);
+            })
+            ->map(function ($item) use ($freshModels) {
+                return [
+                    'model' => $freshModels->find($item['model']),
+                    'quantity' => $item['quantity'],
+                ];
+            });
     }
 }

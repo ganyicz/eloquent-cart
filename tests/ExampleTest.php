@@ -51,6 +51,40 @@ class ExampleTest extends TestCase
 
         $this->assertEquals(2, session('cart.items')[0]['quantity']);
     }
+
+    /** @test */
+    public function fetches_fresh_instance_of_models()
+    {
+        $product = Product::create(['price' => 100_00]);
+
+        session()->put('cart.items', [
+            [
+                'model' => clone $product,
+                'quantity' => 1,
+            ],
+        ]);
+
+        $product->update(['price' => 200_00]);
+
+        $this->assertEquals(200_00, Cart::total());
+    }
+
+    /** @test */
+    public function filters_out_non_existent_models()
+    {
+        $product = Product::create(['price' => 100_00]);
+
+        session()->put('cart.items', [
+            [
+                'model' => clone $product,
+                'quantity' => 1,
+            ],
+        ]);
+
+        $product->delete();
+
+        $this->assertEquals(0, Cart::total());
+    }
 }
 
 class Product extends Model 
