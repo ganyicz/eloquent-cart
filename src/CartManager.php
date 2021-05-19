@@ -47,13 +47,9 @@ class CartManager
         $this->save();
     }
 
-    public function find($model): ?CartItem
+    public function find(Model $model): ?CartItem
     {
-        return $this->items()->first(fn ($item) => 
-            $model instanceof Model
-                ? $item->model->is($model)
-                : $item->model->getKey() === (int) $model
-        );
+        return $this->items()->first(fn ($item) => $item->model->is($model));
     }
 
     public function save()
