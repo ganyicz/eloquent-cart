@@ -17,9 +17,6 @@ class CartServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('eloquent-cart')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_eloquent-cart_table')
-            ->hasCommand(CartCommand::class);
+            ->hasConfigFile('cart')
     }
 }
