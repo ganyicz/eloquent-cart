@@ -26,6 +26,11 @@ class CartItem
     {
         $this->removed = true;
 
+        $this->save();
+    }
+
+    public function save()
+    {
         Cart::save();
     }
 
