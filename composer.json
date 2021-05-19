@@ -53,7 +53,7 @@
                 "Ganyicz\\Cart\\CartServiceProvider"
             ],
             "aliases": {
-                "Cart": "Ganyicz\\Cart\\CartFacade"
+                "Cart": "Ganyicz\\Cart\\Cart"
             }
         }
     },
