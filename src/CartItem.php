@@ -8,8 +8,7 @@ use Illuminate\Support\Str;
 class CartItem
 {
     public int $quantity = 1;
-
-    private bool $removed = false;
+    public bool $removed = false;
 
     public function __construct(public Model $model) {}
 
@@ -26,6 +25,8 @@ class CartItem
     public function remove()
     {
         $this->removed = true;
+
+        Cart::save();
     }
 
     private function hasAccessor($attribute)

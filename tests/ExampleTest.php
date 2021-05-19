@@ -110,8 +110,6 @@ class ExampleTest extends TestCase
 
         Cart::items()->first()->remove();
 
-        Cart::save();
-
         $this->assertEquals(0, Cart::total());
         $this->assertEmpty(Cart::items());
         $this->assertEmpty(session('cart.items'));
