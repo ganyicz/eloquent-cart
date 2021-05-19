@@ -30,7 +30,7 @@ class CartManager
     public function total()
     {
         return $this->items()->sum(fn ($item) =>
-            $item->model->price * $item->quantity
+            $item->unit_price * $item->quantity
         );
     }
     
@@ -39,9 +39,9 @@ class CartManager
         if ($existingItem = $this->find($model)) {
             $existingItem->quantity += $quantity;
         } else {
-            $this->items->add(tap(new CartItem($model), fn ($item) =>
-                $item->quantity = $quantity
-            ));
+            $this->items->add(
+                tap(new CartItem($model))->quantity($quantity)
+            );
         }
 
         $this->save();
@@ -65,7 +65,7 @@ class CartManager
 
     private function refreshModels()
     {
-        $freshModels = EloquentCollection::make($this->items()->pluck('model'))->fresh();
+        $freshModels = EloquentCollection::make($this->items->pluck('model'))->fresh();
 
         $freshItems = $this->items
             ->filter(fn ($item) => 
