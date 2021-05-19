@@ -24,7 +24,8 @@ class CartManager
 
     public function total()
     {
-        return $this->items->sum(fn ($item) =>
+        return $this->items->sum(
+            fn ($item) =>
             $item->model->price * $item->quantity
         );
     }
@@ -34,7 +35,9 @@ class CartManager
         if ($existingItem = $this->items->first(fn ($item) => $item->model->is($model))) {
             $existingItem->quantity += $quantity;
         } else {
-            $this->items->add(tap(new CartItem($model), fn ($item) =>
+            $this->items->add(tap(
+                new CartItem($model),
+                fn ($item) =>
                 $item->quantity = $quantity
             ));
         }

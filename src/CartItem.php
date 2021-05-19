@@ -9,7 +9,9 @@ class CartItem
 {
     public int $quantity = 1;
 
-    public function __construct(public Model $model) {}
+    public function __construct(public Model $model)
+    {
+    }
 
     public function total()
     {
