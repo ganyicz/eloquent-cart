@@ -22,6 +22,11 @@ class CartManager
         return $this->items->reject(fn ($item) => $item->removed);
     }
 
+    public function empty()
+    {
+        return $this->items()->isEmpty();
+    }
+
     public function total()
     {
         return $this->items()->sum(fn ($item) =>
