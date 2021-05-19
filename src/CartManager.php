@@ -25,25 +25,18 @@ class CartManager
     public function total()
     {
         return $this->items->sum(fn ($item) =>
-            $item['model']->price * $item['quantity']
+            $item->model->price * $item->quantity
         );
     }
     
     public function add(Model $model, int $quantity = 1)
     {
-        $existingItemIndex = $this->items->search(fn ($item) => $item['model']->is($model));
-        $existingItem = $existingItemIndex === false ? null : $this->items[$existingItemIndex];
-
-        if ($existingItem) {
-            $this->items->put($existingItemIndex, [
-                'model' => $model,
-                'quantity' => $existingItem['quantity'] + $quantity,
-            ]);
+        if ($existingItem = $this->items->first(fn ($item) => $item->model->is($model))) {
+            $existingItem->quantity += $quantity;
         } else {
-            $this->items->add([
-                'model' => $model,
-                'quantity' => $quantity,
-            ]);
+            $this->items->add(tap(new CartItem($model), fn ($item) =>
+                $item->quantity = $quantity
+            ));
         }
 
         $this->update();
@@ -62,13 +55,10 @@ class CartManager
 
         $this->items = $this->items
             ->filter(function ($item) use ($freshModels) {
-                return $freshModels->contains($item['model']);
+                return $freshModels->contains($item->model);
             })
-            ->map(function ($item) use ($freshModels) {
-                return [
-                    'model' => $freshModels->find($item['model']),
-                    'quantity' => $item['quantity'],
-                ];
+            ->each(function ($item) use ($freshModels) {
+                $item->model = $freshModels->find($item->model);
             });
     }
 }

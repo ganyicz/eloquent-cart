@@ -3,6 +3,7 @@
 namespace Ganyicz\Cart\Tests;
 
 use Ganyicz\Cart\Cart;
+use Ganyicz\Cart\CartItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -28,7 +29,7 @@ class ExampleTest extends TestCase
         
         Cart::add($product, 2);
 
-        $this->assertEquals(2, session('cart.items')[0]['quantity']);
+        $this->assertEquals(2, session('cart.items')[0]->quantity);
     }
 
     /** @test */
@@ -49,7 +50,7 @@ class ExampleTest extends TestCase
         Cart::add($product);
         Cart::add($product);
 
-        $this->assertEquals(2, session('cart.items')[0]['quantity']);
+        $this->assertEquals(2, session('cart.items')[0]->quantity);
     }
 
     /** @test */
@@ -58,10 +59,7 @@ class ExampleTest extends TestCase
         $product = Product::create(['price' => 100_00]);
 
         session()->put('cart.items', [
-            [
-                'model' => clone $product,
-                'quantity' => 1,
-            ],
+            new CartItem(clone $product),
         ]);
 
         $product->update(['price' => 200_00]);
@@ -75,15 +73,32 @@ class ExampleTest extends TestCase
         $product = Product::create(['price' => 100_00]);
 
         session()->put('cart.items', [
-            [
-                'model' => clone $product,
-                'quantity' => 1,
-            ],
+            new CartItem(clone $product),
         ]);
 
         $product->delete();
 
         $this->assertEquals(0, Cart::total());
+    }
+
+    /** @test */
+    public function cart_item_calculates_total()
+    {
+        $product = Product::create(['price' => 100_00]);
+
+        Cart::add($product, 2);
+
+        $this->assertEquals(200_00, Cart::items()->first()->total());
+    }
+
+    /** @test */
+    public function cart_item_total_can_be_accessed_as_a_property()
+    {
+        $product = Product::create(['price' => 100_00]);
+
+        Cart::add($product, 2);
+
+        $this->assertEquals(200_00, Cart::items()->first()->total);
     }
 }
 
