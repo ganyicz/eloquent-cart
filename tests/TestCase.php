@@ -21,6 +21,22 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set('database.connections.testbench', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
+    }
+
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+
+        $this->artisan('migrate', ['--database' => 'testbench'])->run();
+
+        $this->beforeApplicationDestroyed(function () {
+            $this->artisan('migrate:rollback', ['--database' => 'testbench'])->run();
+        });
     }
 }
