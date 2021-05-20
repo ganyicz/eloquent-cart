@@ -29,9 +29,7 @@ class CartManager
 
     public function total()
     {
-        return $this->items()->sum(fn ($item) =>
-            $item->unit_price * $item->quantity
-        );
+        return $this->items()->sum->total();
     }
     
     public function add(Model $model, int $quantity = 1)
