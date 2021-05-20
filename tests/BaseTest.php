@@ -6,8 +6,8 @@ use Ganyicz\Cart\Cart;
 use Ganyicz\Cart\CartItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class BaseTest extends TestCase
 {
@@ -147,7 +147,7 @@ class BaseTest extends TestCase
     }
 }
 
-class Product extends Model 
+class Product extends Model
 {
     protected $guarded = [];
     protected $casts = [

@@ -62,10 +62,12 @@ class CartManager
         $freshModels = EloquentCollection::make($this->items->pluck('model'))->fresh();
 
         $freshItems = $this->items
-            ->filter(fn ($item) => 
+            ->filter(
+                fn ($item) =>
                 $freshModels->contains($item->model)
             )
-            ->each(fn ($item) => 
+            ->each(
+                fn ($item) =>
                 $item->model = $freshModels->find($item->model)
             );
 

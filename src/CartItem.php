@@ -11,7 +11,7 @@ class CartItem
     public int $quantity = 1;
     public bool $removed = false;
 
-    public function __construct(public Model $model) 
+    public function __construct(public Model $model)
     {
         $this->id = Str::uuid();
     }

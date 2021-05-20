@@ -2,8 +2,8 @@
 
 namespace Ganyicz\Cart\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
 use Ganyicz\Cart\CartServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
@@ -23,9 +23,9 @@ class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
 }
