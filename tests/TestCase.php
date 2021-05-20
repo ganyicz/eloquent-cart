@@ -28,15 +28,4 @@ class TestCase extends Orchestra
             'prefix'   => '',
         ]);
     }
-
-    protected function defineDatabaseMigrations()
-    {
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-
-        $this->artisan('migrate', ['--database' => 'testbench'])->run();
-
-        $this->beforeApplicationDestroyed(function () {
-            $this->artisan('migrate:rollback', ['--database' => 'testbench'])->run();
-        });
-    }
 }

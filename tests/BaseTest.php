@@ -5,11 +5,25 @@ namespace Ganyicz\Cart\Tests;
 use Ganyicz\Cart\Cart;
 use Ganyicz\Cart\CartItem;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 
-class ExampleTest extends TestCase
+class BaseTest extends TestCase
 {
-    use RefreshDatabase;
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        (new ProductTableMigration)->up();
+    }
+
+    public function tearDown(): void
+    {
+        (new ProductTableMigration)->down();
+
+        parent::tearDown();
+    }
     
     /** @test */
     public function model_can_be_added()
@@ -139,4 +153,21 @@ class Product extends Model
     protected $casts = [
         'price' => 'integer',
     ];
+}
+
+class ProductTableMigration extends Migration
+{
+    public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->integer('price');
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('products');
+    }
 }
