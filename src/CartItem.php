@@ -7,8 +7,19 @@ use Illuminate\Support\Str;
 
 class CartItem
 {
+    /**
+     * Unique id generated when model is added
+     */
     public string $id;
+
+    /**
+     * The item's quantity
+     */
     public int $quantity = 1;
+
+    /**
+     * Indicates if the item should be removed from the cart on the next save
+     */
     public bool $removed = false;
 
     public function __construct(public Model $model)
@@ -26,13 +37,14 @@ class CartItem
         return $this->model->price;
     }
 
-    public function quantity($value = null)
+    /**
+     * Update the item's quantity and save the cart instance
+     * 
+     * @return void
+     */
+    public function quantity(int $quantity)
     {
-        if (is_null($value)) {
-            return $this->quantity;
-        }
-        
-        $this->quantity = $value;
+        $this->quantity = $quantity;
 
         $this->save();
     }
