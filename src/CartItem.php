@@ -34,15 +34,24 @@ class CartItem
 
     public function unitPrice()
     {
-        return $this->model->price;
+        return $this->model->getPrice() ?? $this->model->price ?? 0;
     }
 
-    /**
-     * Update the item's quantity and save the cart instance
-     * 
-     * @return void
-     */
-    public function quantity(int $quantity)
+    public function increment($quantity = 1)
+    {
+        $this->quantity+= $quantity;
+
+        $this->save();
+    }
+
+    public function decrement($quantity = 1)
+    {
+        $this->quantity-= $quantity;
+
+        $this->save();
+    }
+
+    public function update(int $quantity)
     {
         $this->quantity = $quantity;
 
@@ -51,14 +60,12 @@ class CartItem
 
     public function remove()
     {
-        $this->removed = true;
-
-        $this->save();
+        Cart::remove($this->id);
     }
 
     public function save()
     {
-        Cart::save();
+        Cart::replace($this->id, $this);
     }
 
     private function hasAccessor($attribute)

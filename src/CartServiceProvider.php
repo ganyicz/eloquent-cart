@@ -10,7 +10,10 @@ class CartServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package->name('eloquent-cart')->hasConfigFile('cart');
+    }
 
-        $this->app->singleton('cart', CartManager::class);
+    public function bootingPackage()
+    {
+        $this->app->bind('cart', CartManager::class);
     }
 }
