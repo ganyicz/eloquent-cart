@@ -2,7 +2,6 @@
 
 namespace Ganyicz\Cart;
 
-use BadMethodCallException;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,7 +38,8 @@ class CartManager
      */
     public function find($id): ?CartItem
     {
-        return $this->items()->first(fn ($item) => 
+        return $this->items()->first(
+            fn ($item) =>
             $id instanceof Model
                 ? $item->model->is($id)
                 : $item->id === (string) $id
@@ -50,11 +50,14 @@ class CartManager
     {
         if ($existingItem = $this->find($model)) {
             $existingItem->increment($quantity);
+
             return;
         }
         
         session()->put('cart.items', $this->items()->add(
-            tap(new CartItem($model), fn ($item) => 
+            tap(
+                new CartItem($model),
+                fn ($item) =>
                 $item->quantity = $quantity
             )
         ));
@@ -89,17 +92,20 @@ class CartManager
     {
         if (session()->has("cart.context.{$id}")) {
             session()->put("cart.context.{$id}", $newInstance);
+
             return;
         }
         
-        session()->put('cart.items', $this->items()->map(fn ($item) =>
+        session()->put('cart.items', $this->items()->map(
+            fn ($item) =>
             $item->id === $id ? $newInstance : $item
         ));
     }
 
     public function remove($id)
     {
-        session()->put('cart.items', $this->items()->reject(fn ($item) => 
+        session()->put('cart.items', $this->items()->reject(
+            fn ($item) =>
             $item->id === $id
         ));
     }
@@ -113,10 +119,12 @@ class CartManager
     {
         $freshModels = EloquentCollection::make($this->items()->pluck('model'))->fresh();
 
-        session()->put('cart.items', 
+        session()->put(
+            'cart.items',
             $this->items()
                 ->filter(fn ($item) => $freshModels->contains($item->model))
-                ->each(fn ($item) =>
+                ->each(
+                    fn ($item) =>
                     $item->model = $freshModels->find($item->model)
                 )
         );

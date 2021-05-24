@@ -39,14 +39,14 @@ class CartItem
 
     public function increment($quantity = 1)
     {
-        $this->quantity+= $quantity;
+        $this->quantity += $quantity;
 
         $this->save();
     }
 
     public function decrement($quantity = 1)
     {
-        $this->quantity-= $quantity;
+        $this->quantity -= $quantity;
 
         $this->save();
     }
