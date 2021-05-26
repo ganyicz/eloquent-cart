@@ -3,10 +3,13 @@
 namespace Ganyicz\Cart;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Queue\SerializesAndRestoresModelIdentifiers;
 use Illuminate\Support\Str;
 
 class CartItem
 {
+    use SerializesAndRestoresModelIdentifiers;
+
     /**
      * Unique id generated when model is added
      */
@@ -87,5 +90,27 @@ class CartItem
         }
 
         return $this->$attribute;
+    }
+
+    /**
+     * Prepare the instance for serialization.
+     *
+     * @return array
+     */
+    public function __sleep()
+    {
+        $this->model = $this->getSerializedPropertyValue($this->model);
+
+        return array_keys(get_object_vars($this));
+    }
+
+    /**
+     * Restore the model after serialization.
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        $this->model = $this->getRestoredPropertyValue($this->model);
     }
 }
